@@ -46,25 +46,23 @@ public static class DataReaderExtensions
     
     public static T GetValue<T>(this IDataReader reader, string column)
     {
-        if (reader.TryGetOrdinal(column, out var order) && !reader.IsValueNull(order))
-        {
-            var type = typeof(T);
+        if (!reader.TryGetOrdinal(column, out var order) || reader.IsValueNull(order))
+            return default!;
+        
+        var type = typeof(T);
 
-            if (type == typeof(string))
-                return (T)(object)reader.GetString(order);
+        if (type == typeof(string))
+            return (T)(object)reader.GetString(order);
 
-            if (type == typeof(int))
-                return (T)(object)reader.GetInt32(order);
+        if (type == typeof(int))
+            return (T)(object)reader.GetInt32(order);
 
-            if (type == typeof(Guid))
-                return (T)(object)reader.GetGuid(order);
+        if (type == typeof(Guid))
+            return (T)(object)reader.GetGuid(order);
 
-            if (type == typeof(DateTime))
-                return (T)(object)reader.GetDateTime(order);
+        if (type == typeof(DateTime))
+            return (T)(object)reader.GetDateTime(order);
             
-            throw new NotSupportedException($"Type {type} is not supported.");
-        }
-
-        return default!;
+        throw new NotSupportedException($"Type {type} is not supported.");
     }
 }
